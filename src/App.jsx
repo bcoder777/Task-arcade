@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // ADD useEffect HERE
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
@@ -7,8 +7,25 @@ import QuestList from './components/QuestList';
 import MotivationalQuote from './components/MotivationalQuote';
 
 function App() {
-  const [dailyQuests, setDailyQuests] = useState([]);
-  const [deadlineMissions, setDeadlineMissions] = useState([]);
+  // 1. LOAD DATA FROM LOCALSTORAGE ON INITIAL LOAD
+  const [dailyQuests, setDailyQuests] = useState(() => {
+    const saved = localStorage.getItem('dailyQuests');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [deadlineMissions, setDeadlineMissions] = useState(() => {
+    const saved = localStorage.getItem('deadlineMissions');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // 2. SAVE DATA TO LOCALSTORAGE WHENEVER IT CHANGES
+  useEffect(() => {
+    localStorage.setItem('dailyQuests', JSON.stringify(dailyQuests));
+  }, [dailyQuests]);
+
+  useEffect(() => {
+    localStorage.setItem('deadlineMissions', JSON.stringify(deadlineMissions));
+  }, [deadlineMissions]);
 
   const handleAddTask = (newTask, questType) => {
     if (questType === 'daily') {
